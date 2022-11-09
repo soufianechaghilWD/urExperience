@@ -27,7 +27,8 @@ export default class App {
     }
 
     errorHandlingMiddleWare() {
-        this.app.use(this.errorHandling);
+        const {app, errorHandling} = this;
+        app.use(errorHandling);
     }
 
     connectToDataBase() {
@@ -41,14 +42,16 @@ export default class App {
     }
 
     initializeRoutes() {
-        this.routes.forEach(route => {
-            this.app.use('/api', route);
+        const {app, routes} = this;
+        routes.forEach(route => {
+            app.use('/api', route.router);
         });
     }
 
     listen() {
-        this.app.listen(this.port, () => {
-            console.log('app running on port: ', this.port);
+        const {app, port} = this;        
+        app.listen(port, () => {
+            console.log('app running on port: ', port);
         })
     }
 
