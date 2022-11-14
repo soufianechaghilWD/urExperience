@@ -5,9 +5,8 @@ const userOp = new User();
 
 export const registerUser = async (req, res, next) => {
     try {
-        await userOp.createUser(req.body);
-        const token = jwt.sign({ username: req.body.username }, "token", { expiresIn: "7d" });        
-        res.status(201).json({token});
+        const obj = await userOp.createUser(req.body);
+        res.status(201).json(obj);
     } catch (e) {
         next(e);
     }
@@ -36,6 +35,16 @@ export const editUser = async (req, res, next) => {
     try {
         const obj = await userOp.updateUser(req.body.userData, req.params.userId);
         res.status(200).json(obj);
+    } catch(e) {
+        next(e);
+    }
+}
+
+export const compareConfirmationCode = async (req, res, next) => {
+    try{
+        await userOp.checkConfirmationCode(req.body._id, req.body.candidate);
+        const token = jwt.sign({ username: req.body.username }, "token", { expiresIn: "7d" });        
+        res.status(200).json({token});
     } catch(e) {
         next(e);
     }

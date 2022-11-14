@@ -1,6 +1,6 @@
 import {Router} from "express";
 import VerifyJWT from "../middlewares/token.middle.js";
-import { deleteUser, editUser, loginUser, registerUser } from "../services/user.service.js";
+import { compareConfirmationCode, deleteUser, editUser, loginUser, registerUser } from "../services/user.service.js";
 
 class userRouter {
 
@@ -14,6 +14,7 @@ class userRouter {
     initializeRoutes() {
         const {router, path} = this;
         router.post(path, registerUser);
+        router.post(path+"/confirm", compareConfirmationCode);
         router.post(path+"/sessions", loginUser);
         router.delete(path+"/:userId", VerifyJWT, deleteUser);
         router.put(path+"/:userId", VerifyJWT, editUser);
