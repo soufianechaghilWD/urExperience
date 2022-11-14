@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
+import Api from "../../api";
 
 const typeText = "text";
+const typeEmail = "email";
 const passwordLabel = "Password";
 
 const emailPlaceHolder = "type a valid email";
@@ -34,7 +36,13 @@ export default function Index() {
   };
 
   const signUp = () => {
-    console.log("tried to sign up");
+    Api.post('/users', {email, username, password})
+    .then((res) => {
+      console.log('res: ', res);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    })
   };
 
   return (
@@ -51,7 +59,7 @@ export default function Index() {
         </div>
         <div className="xl:mt-4 mt-10">
           <LabelAndInputs
-            type={typeText}
+            type={typeEmail}
             value={email}
             onChange={changeEmail}
             placeholder={emailPlaceHolder}
@@ -78,6 +86,7 @@ export default function Index() {
           height="h-[50px]"
           label="Sign up"
           onClick={signUp}
+          disabled={email === "" || username === "" || password === ""}
         />
         <span>
           If you have an account{" "}

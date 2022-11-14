@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 
 export default class App {
 
@@ -24,6 +25,7 @@ export default class App {
 
     initializeMiddleWeares() {
         this.app.use(express.json());
+        this.app.use(cors());
     }
 
     errorHandlingMiddleWare() {
