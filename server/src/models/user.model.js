@@ -42,7 +42,8 @@ export default class User {
             email: {type: String, required: true, unique: true},
             password: {type: String, required: true},
             confirmationCode: {type: Number, required: true, default: 0},
-            confirmed: {type: Boolean, required: true, default: false}
+            confirmed: {type: Boolean, required: true, default: false},
+            profilePic: {type: String, required: true, default: "user.png"}
         });
     }
 
@@ -68,6 +69,7 @@ export default class User {
         try {
             const user = await userModel.findOne({_id});
             if(!user) throw {done: false, message: "user does not exist"};
+            if(user.confirmed) throw {done: false, message: 'user already confirmed'};
 
             const isCandidateCorrect = user.compareConfirmationCode(candidate);
             if(!isCandidateCorrect) throw { done: false, message: "Confirmation code is wrong" };
@@ -90,7 +92,7 @@ export default class User {
             if(!user) throw {done: false, message: "user does not exist"};
             const isPasswordRight = await user.comparePassword(password);
     
-            if(isPasswordRight) return {done: true};
+            if(isPasswordRight) return {done: true, _id: user._id, confirmed: user.confirmed};
     
             throw {done: false, message: "wrong password"};
     
@@ -130,6 +132,19 @@ export default class User {
             if(e.keyPattern) msg = Object.keys(e.keyPattern)[0] + " already exists";
             throw {done: false, message: msg || e.message || "Something went wrong"};
         }
+    }
+
+    async findUser(_id) {
+        const { userModel } = this;
+
+        try {
+            const user = await userModel.findOne({_id});
+
+            return {done: true, user};
+        } catch(e) {
+            throw {done: false, message: e.message || "something went wrong"};
+        }
+
     }
 
 }

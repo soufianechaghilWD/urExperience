@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
@@ -23,6 +23,8 @@ export default function Index() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const Navigate = useNavigate();
+
   const changeEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -38,7 +40,11 @@ export default function Index() {
   const signUp = () => {
     Api.post('/users', {email, username, password})
     .then((res) => {
-      console.log('res: ', res);
+      const {done, _id} = res.data
+      if(done){
+        // move to confirmation page and pass the user_id
+        Navigate('/codeverification', {state: {_id}});
+      }
     })
     .catch((err) => {
       console.log('err: ', err);

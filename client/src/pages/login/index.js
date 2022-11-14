@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
+import API from "../../api";
+import { userContext } from "../../contexts/userContext";
 
 const typeText = "text";
 const passwordLabel = "Password";
@@ -16,6 +18,9 @@ const passwordPlaceHolder = "type your password";
 export default function Index() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const Navigate = useNavigate();
+  const { getUserAndSet } = useContext(userContext);
+
 
   const changeUsername = (e) => {
     setUsername(e.target.value);
@@ -26,7 +31,23 @@ export default function Index() {
   };
 
   const logIn = () => {
-    console.log("tried to sign up");
+    API.post('/users/sessions', {username, password})
+    .then(async (res) => {
+      console.log('res: ', res);
+      const {confirm, _id, token} = res.data;
+      if(confirm) {
+        Navigate('/codeverification', {state: {_id}});
+        return
+      }
+      
+      localStorage.setItem('experienceToken', token);
+      await getUserAndSet();
+      Navigate('/');
+      
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    })
   };
 
   return (

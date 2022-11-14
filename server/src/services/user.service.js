@@ -1,5 +1,6 @@
 import User from "../models/user.model.js"
 import jwt from "jsonwebtoken";
+import _ from "lodash";
 
 const userOp = new User();
 
@@ -14,8 +15,9 @@ export const registerUser = async (req, res, next) => {
 
 export const loginUser = async (req, res, next) => {
     try {
-        await userOp.checkUserAndPass(req.body);
-        const token = jwt.sign({ username: req.body.username }, "token", { expiresIn: "7d" });        
+        const {_id, confirmed} = await userOp.checkUserAndPass(req.body);
+        if(!confirmed) return res.status(200).json({confirm: true, _id});
+        const token = jwt.sign({ _id }, "token", { expiresIn: "7d" });        
         res.status(200).json({token});
     } catch(e) {
         next(e);
@@ -42,9 +44,18 @@ export const editUser = async (req, res, next) => {
 
 export const compareConfirmationCode = async (req, res, next) => {
     try{
-        await userOp.checkConfirmationCode(req.body._id, req.body.candidate);
-        const token = jwt.sign({ username: req.body.username }, "token", { expiresIn: "7d" });        
+        await userOp.checkConfirmationCode(req.body._id, parseInt(req.body.candidate));
+        const token = jwt.sign({ _id: req.body._id}, "token", { expiresIn: "7d" });        
         res.status(200).json({token});
+    } catch(e) {
+        next(e);
+    }
+}
+
+export const getUser = async (req, res, next) => {
+    try{
+        const {user} = await userOp.findUser(req.cookies._id);
+        res.status(200).json(_.omit(JSON.parse(JSON.stringify(user)), ["password", "confirmationCode"]));
     } catch(e) {
         next(e);
     }

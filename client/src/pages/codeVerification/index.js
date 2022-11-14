@@ -1,21 +1,44 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
+import API from "../../api";
+import { userContext } from "../../contexts/userContext";
 
 const typeText = "text";
 const codePlaceHolder = "type the verification code";
 const codeLabel = "Verification code";
 
 export default function Index() {
+
   const [code, setCode] = useState("");
+  const [id, setId] = useState("");
+  const {state} = useLocation();
+  const navigate = useNavigate();
+
+  const { getUserAndSet } = useContext(userContext);
+
+  useEffect(() => {
+    const {_id} = state;
+    // if the _id does not exist do some
+    setId(_id);
+  })
 
   const changeCode = (e) => {
     setCode(e.target.value);
   };
 
   const verify = () => {
-    console.log("trying to verify");
+    API.post('/users/confirm', {candidate: code, _id: id})
+    .then(async (res) => {
+      localStorage.setItem('experienceToken', res.data.token);
+      await getUserAndSet();
+      navigate('/');
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    })
   };
 
   return (
