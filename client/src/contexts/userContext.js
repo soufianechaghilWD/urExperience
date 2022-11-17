@@ -6,37 +6,45 @@ export const userContext = createContext({});
 const UserProvider = (props) => {
     
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // get the user from the server and set it to context if it exists
+    const getUserAndSet = async () => {
         setLoading(true);
-        getUserAndSet();
-        setLoading(false);
-    })
-
-    const getUserAndSet = () => {
         const token = localStorage.getItem('experienceToken');
 
-        if(token) {
-            API.get('/users/', {
-                headers: {
-                    "x-access-token": token
-                }
-            })
-            .then((res) => {
-                setUser(res.data);
-            })
-            .catch((err) => {
-                console.log('err: ', err);
-            })
+        if(!token) {
+            setLoading(false);
+            return
         }
 
+        try{
+            const res = await API.get('/users/', {headers: {"x-access-token": token}});
+            setUser(res.data);
+        } catch(e) {
+            console.log('err: ', e);
+        } finally {
+            setLoading(false);
+        }
     }
+
+    const assignNewProToUser = (newPros) => {
+        const newUser = Object.assign({}, user);
+        Object.keys(newPros).forEach(proKey => {
+            newUser[proKey] = newPros[proKey];
+        });
+        setUser(newUser);
+    }
+    
+    useEffect(() => {
+        // get the user from the server and set it to context if it exists
+        getUserAndSet();
+    }, [])
 
     const { children } = props;
 
-    return <userContext.Provider value={{user, getUserAndSet, loading}}>
+    console.log(user);
+
+    return <userContext.Provider value={{user, getUserAndSet, loading, assignNewProToUser}}>
         {children}
     </userContext.Provider>
 

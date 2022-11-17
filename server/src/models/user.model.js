@@ -43,7 +43,8 @@ export default class User {
             password: {type: String, required: true},
             confirmationCode: {type: Number, required: true, default: 0},
             confirmed: {type: Boolean, required: true, default: false},
-            profilePic: {type: String, required: true, default: "user.png"}
+            profilePic: {type: String, required: true, default: "user.png"},
+            bio: {type: String}
         });
     }
 

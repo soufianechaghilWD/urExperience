@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
@@ -19,8 +19,12 @@ export default function Index() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const Navigate = useNavigate();
-  const { getUserAndSet } = useContext(userContext);
+  const { getUserAndSet, user, loading } = useContext(userContext);
 
+
+  useEffect(() => {
+    if(!loading && user) Navigate('/');
+  }, [loading]);
 
   const changeUsername = (e) => {
     setUsername(e.target.value);

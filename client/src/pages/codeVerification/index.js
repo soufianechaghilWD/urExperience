@@ -20,6 +20,11 @@ export default function Index() {
   const { getUserAndSet } = useContext(userContext);
 
   useEffect(() => {
+
+    if(!state) {
+      navigate('/');
+      return;
+    }
     const {_id} = state;
     // if the _id does not exist do some
     setId(_id);
@@ -34,7 +39,7 @@ export default function Index() {
     .then(async (res) => {
       localStorage.setItem('experienceToken', res.data.token);
       await getUserAndSet();
-      navigate('/');
+      navigate('/picandbio');
     })
     .catch((err) => {
       console.log('err: ', err);

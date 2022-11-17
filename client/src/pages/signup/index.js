@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
 import Api from "../../api";
+import { userContext } from "../../contexts/userContext";
 
 const typeText = "text";
 const typeEmail = "email";
@@ -24,6 +25,11 @@ export default function Index() {
   const [password, setPassword] = useState("");
 
   const Navigate = useNavigate();
+  const { user, loading } = useContext(userContext);
+
+  useEffect(() => {
+    if(!loading && user) Navigate('/');
+  }, [loading]);
 
   const changeEmail = (e) => {
     setEmail(e.target.value);
