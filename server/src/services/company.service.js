@@ -29,3 +29,12 @@ export const updateCompany = async (req, res, next) => {
         next(e);
     }
 }
+
+export const userUpdateCompany = async (req, res, next) => {
+    try {
+        const obj = await companyOp.editCompanyUser(req.body, req.params.companyId);
+        res.status(201).json(obj);
+    } catch(e) {
+        next(e);
+    }
+}

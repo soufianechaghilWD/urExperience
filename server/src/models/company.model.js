@@ -76,4 +76,30 @@ export default class Company {
         }
     }
 
+    async editCompanyUser(newData, _id) {
+        const {companyModel} = this;
+
+        try {
+            const company = await companyModel.findOne({_id});
+            if(!company) throw {message: "company does not exist"};
+            // update the rating
+            const {rate} = newData;
+            if(company.rate === 10) company.rate = rate;
+            else company.rate = (company.rate + rate) / 2;
+
+            const updatedData = _.omit(newData, ['rate']);
+            Object.keys(updatedData).forEach(element => {
+                company[`${element}`].push(updatedData[`${element}`]);
+            });
+
+            await company.save();
+
+            return {done: true}
+
+        } catch(e) {
+            throw { done: false, message: e.message || "Something went wrong"};            
+        }
+
+    }
+
 }
