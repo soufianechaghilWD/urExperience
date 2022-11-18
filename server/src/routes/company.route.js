@@ -1,5 +1,6 @@
 import {Router} from "express";
 import VerifyJWT from "../middlewares/token.middle.js";
+import { addCompany, getCompany, updateCompany } from "../services/company.service.js";
 
 class companyRouter {
 
@@ -13,7 +14,10 @@ class companyRouter {
     initializeRoutes() {
         const {router, path} = this;
         // endpoint for the admin to add a company
-        router.post(path+"/admin", );
+        router.post(path+"/admin", addCompany)
+        .put(path+"/admin", updateCompany);
+        router.post(path, VerifyJWT, addCompany).
+        get(path+"/:companyId", getCompany);
     }
 }
 
