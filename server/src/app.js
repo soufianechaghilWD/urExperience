@@ -22,8 +22,9 @@ export default class App {
     errorHandling(err, req, res, next) {
         const status = err.status || 500;
         const message = err.message || "Something went wrong";
+        const additional = err.additional || null;
     
-        res.status(status).json({status, message});    
+        res.status(status).json({status, message, additional});    
     }
 
     initializeMiddleWeares() {

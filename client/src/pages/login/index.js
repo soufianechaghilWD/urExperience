@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
-import API from "../../api";
-import { userContext } from "../../contexts/userContext";
+import Logic from "./logic";
 
 const typeText = "text";
 const passwordLabel = "Password";
@@ -16,43 +14,8 @@ const typePassword = "password";
 const passwordPlaceHolder = "type your password";
 
 export default function Index() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const Navigate = useNavigate();
-  const { getUserAndSet, user, loading } = useContext(userContext);
-
-
-  useEffect(() => {
-    if(!loading && user) Navigate('/');
-  }, [loading]);
-
-  const changeUsername = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const changePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const logIn = () => {
-    API.post('/users/sessions', {username, password})
-    .then(async (res) => {
-      console.log('res: ', res);
-      const {confirm, _id, token} = res.data;
-      if(confirm) {
-        Navigate('/codeverification', {state: {_id}});
-        return
-      }
-      
-      localStorage.setItem('experienceToken', token);
-      await getUserAndSet();
-      Navigate('/');
-      
-    })
-    .catch((err) => {
-      console.log('err: ', err);
-    })
-  };
+  const { username, password, changeUsername, changePassword, logIn, error, errorField } =
+    Logic();
 
   return (
     <div className="flex xl:items-center justify-center min-h-screen">
@@ -73,6 +36,8 @@ export default function Index() {
             onChange={changeUsername}
             placeholder={usernamePlaceHolder}
             label={usernameLabel}
+            errorField={errorField}
+            error={error}
           />
           <LabelAndInputs
             type={typePassword}
@@ -80,6 +45,8 @@ export default function Index() {
             onChange={changePassword}
             placeholder={passwordPlaceHolder}
             label={passwordLabel}
+            errorField={errorField}
+            error={error}
           />
         </div>
         <Button
@@ -89,6 +56,7 @@ export default function Index() {
           label="Log in"
           onClick={logIn}
         />
+        {error !== "" && <p className="text-center text-danger">{error}</p>}
         <span>
           If you don't have an account{" "}
           <Link to="/signup" className="text-secondary underline">

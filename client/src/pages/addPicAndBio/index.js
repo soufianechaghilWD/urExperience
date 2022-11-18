@@ -15,6 +15,7 @@ export default function Index() {
   const [bio, setBio] = useState("");
   const [file, setFile] = useState(null);
   const [fileUri, setFileUri] = useState("");
+  const [defaultProfilePic, setDefaultProfilePic] = useState('');
 
   const { user, loading, assignNewProToUser } = useContext(userContext);
   const Navigate = useNavigate();
@@ -22,6 +23,10 @@ export default function Index() {
   useEffect(() => {
     if (!loading && !user) Navigate("/login");
   }, [loading]);
+
+  useEffect(() => {
+    if(user) setDefaultProfilePic(process.env.REACT_APP_BaseUrl+user.profilePic);
+  }, [])
 
   const changeBio = (e) => {
     setBio(e.target.value);
@@ -75,7 +80,7 @@ export default function Index() {
         <img
           className="w-[275px] h-[275px] mx-auto"
           alt="user"
-          src={file === null ? User : fileUri}
+          src={(defaultProfilePic && !file) !== "" ? defaultProfilePic : file === null ? User : fileUri}
         />
         <input onChange={uploadPhoto} type="file" className="mx-auto mt-2" />
       </div>

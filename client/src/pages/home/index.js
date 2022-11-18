@@ -4,14 +4,21 @@ import { userContext } from "../../contexts/userContext";
 
 export default function Index() {
 
-    const { user, loading } = useContext(userContext);
+    const { user, loading, setUser } = useContext(userContext);
     const Navigate = useNavigate();
 
     useEffect(() => {
         if(!loading && !user) Navigate('/login');
-    }, [loading])
+    }, [loading, user])
+
+
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('experienceToken');
+    }
 
     return <div>
         <h1>Home</h1>
+        <button onClick={logout}>Logout</button>
         </div>
 }

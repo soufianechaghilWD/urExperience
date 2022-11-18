@@ -20,7 +20,6 @@ export default function Index() {
   const { getUserAndSet } = useContext(userContext);
 
   useEffect(() => {
-
     if(!state) {
       navigate('/');
       return;

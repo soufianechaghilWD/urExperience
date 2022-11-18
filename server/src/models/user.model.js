@@ -58,7 +58,7 @@ export default class User {
         } catch(e) {
             let msg = null;
             if(e.keyPattern) msg = Object.keys(e.keyPattern)[0]+' already exists';
-            throw {done: false, message: msg || e.message || "Something went wrong"};
+            throw {done: false, message: msg || e.message || "Something went wrong", additional: Object.keys(e.keyPattern)[0] || null};
         }
     
     }
@@ -90,15 +90,15 @@ export default class User {
         try {
             const {username, password} = userData;
             const user = await userModel.findOne({username});
-            if(!user) throw {done: false, message: "user does not exist"};
+            if(!user) throw {message: "user does not exist", additional: "username"};
             const isPasswordRight = await user.comparePassword(password);
     
             if(isPasswordRight) return {done: true, _id: user._id, confirmed: user.confirmed};
     
-            throw {done: false, message: "wrong password"};
+            throw {message: "wrong password", additional: "password"};
     
         } catch(e) {
-            throw {done: false, message: e.message || "Something went wrong"};
+            throw {message: e.message || "Something went wrong", additional: e.additional || null};
         }
     }
     

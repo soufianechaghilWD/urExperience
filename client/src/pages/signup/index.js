@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 import LabelAndInputs from "../../components/LabelAndInput";
 import Logo from "../../files/logo.png";
-import Api from "../../api";
-import { userContext } from "../../contexts/userContext";
+import Logic from "./logic";
 
 const typeText = "text";
 const typeEmail = "email";
@@ -20,42 +18,17 @@ const typePassword = "password";
 const passwordPlaceHolder = "type a valid password";
 
 export default function Index() {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const Navigate = useNavigate();
-  const { user, loading } = useContext(userContext);
-
-  useEffect(() => {
-    if(!loading && user) Navigate('/');
-  }, [loading]);
-
-  const changeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const changeUsername = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const changePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const signUp = () => {
-    Api.post('/users', {email, username, password})
-    .then((res) => {
-      const {done, _id} = res.data
-      if(done){
-        // move to confirmation page and pass the user_id
-        Navigate('/codeverification', {state: {_id}});
-      }
-    })
-    .catch((err) => {
-      console.log('err: ', err);
-    })
-  };
+  const {
+    username,
+    email,
+    password,
+    changeEmail,
+    changeUsername,
+    changePassword,
+    signUp,
+    error,
+    errorField
+  } = Logic();
 
   return (
     <div className="flex xl:items-center justify-center min-h-screen">
@@ -76,6 +49,8 @@ export default function Index() {
             onChange={changeEmail}
             placeholder={emailPlaceHolder}
             label={emailLabel}
+            errorField={errorField}
+            error={error}
           />
           <LabelAndInputs
             type={typeText}
@@ -83,6 +58,8 @@ export default function Index() {
             onChange={changeUsername}
             placeholder={usernamePlaceHolder}
             label={usernameLabel}
+            errorField={errorField}
+            error={error}
           />
           <LabelAndInputs
             type={typePassword}
@@ -90,6 +67,8 @@ export default function Index() {
             onChange={changePassword}
             placeholder={passwordPlaceHolder}
             label={passwordLabel}
+            errorField={errorField}
+            error={error}
           />
         </div>
         <Button
@@ -100,6 +79,7 @@ export default function Index() {
           onClick={signUp}
           disabled={email === "" || username === "" || password === ""}
         />
+        {error !== "" && <p className="text-center text-danger">{error}</p>}
         <span>
           If you have an account{" "}
           <Link to="/login" className="text-secondary underline">
