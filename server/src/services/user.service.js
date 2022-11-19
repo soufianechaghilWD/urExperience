@@ -60,3 +60,12 @@ export const getUser = async (req, res, next) => {
         next(e);
     }
 }
+
+export const getUsersNeededData = async (req, res, next) => {
+    try {
+        const obj = await userOp.usersData(req.body.ids);
+        res.status(200).json(obj);
+    } catch(e) {
+        next(e);
+    }
+}

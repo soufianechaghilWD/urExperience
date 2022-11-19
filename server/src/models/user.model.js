@@ -1,6 +1,7 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import randomCode from "../utils/random.js";
+import _ from "lodash";
 
 export default class User {
 
@@ -146,6 +147,17 @@ export default class User {
             throw {done: false, message: e.message || "something went wrong"};
         }
 
+    }
+
+    async usersData(ids) {
+        const {userModel} = this;
+
+        try {
+            const users = await userModel.find({_id: {$in: ids.map(id => Types.ObjectId(id))}});
+            return users.map(user => {return _.omit(JSON.parse(JSON.stringify(user)), ['email', 'password', 'confirmationCode', 'confirmed'])});
+        } catch(e) {
+            throw {message: e.message};
+        }
     }
 
 }
