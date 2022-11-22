@@ -1,6 +1,6 @@
 import {Router} from "express";
 import VerifyJWT from "../middlewares/token.middle.js";
-import { addExperience, getExperience } from "../services/experience.service.js";
+import { addExperience, deleteExperience, engage, getExperience, updateExperience } from "../services/experience.service.js";
 
 class experienceRouter {
 
@@ -14,7 +14,10 @@ class experienceRouter {
     initializeRoutes() {
         const {router, path} = this;
         router.post(path, VerifyJWT, addExperience)
-        .get(path+'/:experienceId', getExperience);
+        .get(path+'/:experienceId', getExperience)
+        .put(path+'/:experienceId', VerifyJWT, updateExperience)
+        .delete(path+'/:experienceId', deleteExperience);
+        router.put(path+'/engage/:experienceId', engage);
 
     }
 }

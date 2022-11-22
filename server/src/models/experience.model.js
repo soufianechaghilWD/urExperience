@@ -57,5 +57,78 @@ export default class Experience {
         }
     }
     
+    async editExperience(experience_id, user_id, data) {
+
+        const {experienceModel} = this;
+
+        try {
+            const experience = await experienceModel.findOne({_id: experience_id});
+            if(!experience) throw {message: "experience does not exist"};
+            const {author, company, agreed, disagreed, ...editableData} = data;
+            if(experience.author !== user_id) throw {message: "you can only edit your experiences"};
+
+
+            Object.keys(editableData).forEach(element => {
+                experience[`${element}`] = editableData[`${element}`];
+            });
+            await experience.save();
+            return {done: true};
+        } catch (e) {
+            throw {message: e.message};
+        }
+    }
+
+    async removeExperience(_id, author) {
+        
+        const {experienceModel} = this; 
+    
+        try {
+            const experience = await experienceModel.findOne({_id});
+            if(!experience) throw {message: "experience does not exist"};
+            if(experience.author !== author) throw {message: "you can only delete your experiences"};
+
+            await experienceModel.deleteOne({_id});
+
+            return {done: true};
+
+        } catch(e) {
+            throw {message: e.message};
+        }
+
+    }
+
+    async enageWithExperience(_id, operation, engager) {
+
+        const {experienceModel} = this; 
+
+        try {
+            const experience = await experienceModel.findOne({_id});
+            if(!experience) throw {message: "experience does not exist"};
+
+            const userAgreed = experience.agreed.some(ele => ele === engager);
+            const userDisagreed = experience.disagreed.some(ele => ele === engager);
+
+            if(operation === "agree") {
+                if(userAgreed || userDisagreed) throw {message: "user already engaged"};
+                experience.agreed.push(engager);
+            } else if(operation === "unagree") {
+                if(!userAgreed) throw {message: "user not agreed"};
+                const idx = experience.agreed.indexOf(engager);
+                experience.agreed.splice(idx, 1);
+            } else if(operation === "disagree") {
+                if(userAgreed || userDisagreed) throw {message: "user already engaged"};
+                experience.disagreed.push(engager);
+            } else if(operation === "undisagree") {
+                if(!userDisagreed) throw {message: "user not disagreed"};
+                const idx = experience.disagreed.indexOf(engager);
+                experience.disagreed.splice(idx, 1);
+            }
+
+            await experience.save();
+            return {done: true};
+        } catch(e) {
+            throw {message: e.message};            
+        }
+    }
 
 }
