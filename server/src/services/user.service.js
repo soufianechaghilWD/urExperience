@@ -69,3 +69,21 @@ export const getUsersNeededData = async (req, res, next) => {
         next(e);
     }
 }
+
+export const followUser = async (req, res, next) => {
+    try {
+        const obj = await userOp.addFollower(req.body._id, req.params.userId);
+        res.status(200).json(obj);
+    } catch(e) {
+        next(e);
+    }
+}
+
+export const InterestIn = async (req, res, next) => {
+    try {
+        const obj = await userOp.addInterest(req.body._id, req.params.companyId);
+        res.status(200).json(obj);        
+    } catch(e) {
+        next(e);
+    }
+}

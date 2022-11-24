@@ -45,7 +45,9 @@ export default class User {
             confirmationCode: {type: Number, required: true, default: 0},
             confirmed: {type: Boolean, required: true, default: false},
             profilePic: {type: String, required: true, default: "user.png"},
-            bio: {type: String}
+            bio: {type: String},
+            followers: [{type: String}],
+            interests: [{type: String}]
         });
     }
 
@@ -155,6 +157,31 @@ export default class User {
         try {
             const users = await userModel.find({_id: {$in: ids.map(id => Types.ObjectId(id))}});
             return users.map(user => {return _.omit(JSON.parse(JSON.stringify(user)), ['email', 'password', 'confirmationCode', 'confirmed'])});
+        } catch(e) {
+            throw {message: e.message};
+        }
+    }
+
+    async addFollower(_id, userToFollow) {
+        return await this.interest(_id, 'followers', userToFollow, "You already follow the user");
+    }
+
+    async addInterest(_id, companyInterestedIn) {
+        return await this.interest(_id, 'interests', companyInterestedIn, "You are already interested in this company");
+    }
+
+    async interest(_id, interest, interestedIn, message) {
+        const {userModel} = this;
+        try {
+            const user = await userModel.findOne({_id});
+            if(!user) throw {message: "user does not exist"};
+
+            if(user[`${interest}`].some(ele => ele === interestedIn)) throw {message};
+
+            user[`${interest}`].push(interestedIn);
+            await user.save();
+
+            return {done: true};            
         } catch(e) {
             throw {message: e.message};
         }
