@@ -42,8 +42,6 @@ const UserProvider = (props) => {
 
     const { children } = props;
 
-    console.log(user);
-
     return <userContext.Provider value={{user, getUserAndSet, loading, assignNewProToUser, setUser}}>
         {children}
     </userContext.Provider>

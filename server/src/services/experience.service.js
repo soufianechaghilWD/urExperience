@@ -46,3 +46,12 @@ export const engage = async (req, res, next) => {
         next(e);
     }
 }
+
+export const getBunchOfExperiences = async (req, res, next) => {
+    try {
+        const obj = await experienceOp.getExperiences(req.body.ids);
+        res.status(200).json(obj);
+    } catch(e) {
+        next(e);
+    }
+}

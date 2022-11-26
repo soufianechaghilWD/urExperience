@@ -99,6 +99,7 @@ export default function Index() {
         height="h-[50px]"
         label="Set"
         onClick={setData}
+        className="mx-auto"
       />
       <div className="xl:mx-auto xl:w-[400px] flex justify-end">
         <Link to="/" className="text-secondary underline text-[30px]">

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import _ from "lodash";
 
 export default class Experience {
@@ -21,7 +21,8 @@ export default class Experience {
             rate: {type: Number, required: true},
             agreed: [{type: String, required: true, default: 0}],
             disagreed: [{type: String, required: true, default: 0}],
-            feedback: {type: String, required: true}
+            feedback: {type: String, required: true},
+            addedAt: {type: Date, required: true, default: new Date()}
         });
     }
 
@@ -131,4 +132,17 @@ export default class Experience {
         }
     }
 
+
+    async getExperiences(ids) {
+
+        const {experienceModel} = this;
+        console.log(ids)
+        try {
+            const experiences = await experienceModel.find({author: {$in: ids.map(id => Types.ObjectId(id))}});
+            return {done: true, experiences};
+        } catch (e){
+            throw {message: e.message};
+        }
+
+    }
 }

@@ -4,6 +4,7 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import CodeVerification from "./pages/codeVerification";
 import PicAndBio from "./pages/addPicAndBio";
+import AddExperience from "./pages/addExperience";
 import UserProvider from "./contexts/userContext";
 import './App.css';
 
@@ -14,6 +15,7 @@ function App() {
       <BrowserRouter>
           <div className="App lg:max-w-[1280px] xl:mx-auto">
             <Routes>
+              <Route path="/addexperience" element={<AddExperience />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/codeverification" element={<CodeVerification />} />

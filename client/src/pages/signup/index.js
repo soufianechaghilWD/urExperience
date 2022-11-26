@@ -72,6 +72,7 @@ export default function Index() {
           />
         </div>
         <Button
+          className="mx-auto"
           font="text-[30px]"
           width="w-[250px] xl:w-[350px]"
           height="h-[50px]"
